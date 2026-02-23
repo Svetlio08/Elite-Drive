@@ -1,10 +1,166 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "shared/base.html" %}
+{% block title %}EliteDrive • Cars{% endblock %}
 
-</body>
-</html>
+{% block content %}
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Cars</h1>
+      <div class="text-muted-2">Browse the luxury inventory.</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-primary" href="{% url 'car-create' %}">+ Add Car</a>
+      <a class="btn btn-outline-light" href="{% url 'brand-list' %}">Manage Brands</a>
+    </div>
+  </div>
+
+  <div class="card glass p-3 mb-3">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-6">
+        <label class="form-label text-muted-2 small mb-1">Tip</label>
+        <div class="text-muted-2 small">
+          Use filters to quickly find the right car.
+        </div>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <span class="badge badge-soft px-3 py-2">Total: {{ page_obj.paginator.count }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card glass p-3 mb-4">
+    <form method="get" class="row g-2 align-items-end">
+
+      <div class="col-md-3">
+        <label class="form-label text-muted-2 small mb-1">Search</label>
+        <input type="text" name="q" value="{{ current.q }}" class="form-control" placeholder="Brand or model">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label text-muted-2 small mb-1">Brand</label>
+        <select name="brand" class="form-select">
+          <option value="">All</option>
+          {% for b in brands %}
+            <option value="{{ b.pk }}" {% if current.brand == b.pk|stringformat:"s" %}selected{% endif %}>
+              {{ b.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label text-muted-2 small mb-1">Fuel</label>
+        <select name="fuel" class="form-select">
+          <option value="">All</option>
+          {% for value,label in fuel_choices %}
+            <option value="{{ value }}" {% if current.fuel == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label text-muted-2 small mb-1">Transmission</label>
+        <select name="trans" class="form-select">
+          <option value="">All</option>
+          {% for value,label in trans_choices %}
+            <option value="{{ value }}" {% if current.trans == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label text-muted-2 small mb-1">Feature</label>
+        <select name="feature" class="form-select">
+          <option value="">All</option>
+          {% for f in features_all %}
+            <option value="{{ f.pk }}" {% if current.feature == f.pk|stringformat:"s" %}selected{% endif %}>
+              {{ f.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label text-muted-2 small mb-1">Min price</label>
+        <input name="min_price" value="{{ current.min_price }}" class="form-control" placeholder="e.g. 100000">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label text-muted-2 small mb-1">Max price</label>
+        <input name="max_price" value="{{ current.max_price }}" class="form-control" placeholder="e.g. 500000">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label text-muted-2 small mb-1">Sort</label>
+        <select name="sort" class="form-select">
+          <option value="newest" {% if current.sort == "newest" %}selected{% endif %}>Newest</option>
+          <option value="price_asc" {% if current.sort == "price_asc" %}selected{% endif %}>Price ↑</option>
+          <option value="price_desc" {% if current.sort == "price_desc" %}selected{% endif %}>Price ↓</option>
+          <option value="year_desc" {% if current.sort == "year_desc" %}selected{% endif %}>Year ↓</option>
+          <option value="hp_desc" {% if current.sort == "hp_desc" %}selected{% endif %}>Horsepower ↓</option>
+        </select>
+      </div>
+
+      <div class="col-md-1 d-grid">
+        <button class="btn btn-primary" type="submit">Go</button>
+      </div>
+
+      <div class="col-md-1 d-grid">
+        <a class="btn btn-outline-light" href="{% url 'car-list' %}">Reset</a>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="row g-3">
+    {% for car in cars %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card glass h-100">
+          {% if car.image_url %}
+            <img src="{{ car.image_url }}" class="card-img-top" alt="Car image" style="height: 190px; object-fit: cover;">
+          {% else %}
+            <div class="d-flex align-items-center justify-content-center" style="height:190px;">
+              <div class="text-muted-2">No image</div>
+            </div>
+          {% endif %}
+
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <div>
+                <div class="fw-semibold">{{ car.brand.name }} {{ car.model_name }}</div>
+                <div class="text-muted-2 small">
+                  {{ car.year }} • {{ car.get_fuel_type_display }} • {{ car.get_transmission_display }}
+                </div>
+              </div>
+              {% if car.is_available %}
+                <span class="badge text-bg-success">Available</span>
+              {% else %}
+                <span class="badge text-bg-secondary">Unavailable</span>
+              {% endif %}
+            </div>
+
+            <div class="mt-3 d-flex flex-wrap gap-2">
+              <span class="badge badge-soft">{{ car.horsepower }} HP</span>
+              <span class="badge badge-soft">€{{ car.price }}</span>
+              <span class="badge badge-soft">{{ car.features.count }} features</span>
+            </div>
+          </div>
+
+          <div class="card-footer bg-transparent border-white border-opacity-10 d-flex gap-2">
+            <a class="btn btn-sm btn-outline-light" href="{% url 'car-detail' car.pk %}">Details</a>
+            <a class="btn btn-sm btn-outline-light" href="{% url 'car-edit' car.pk %}">Edit</a>
+            <a class="btn btn-sm btn-outline-danger ms-auto" href="{% url 'car-delete' car.pk %}">Delete</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="card glass p-4 text-center">
+          <div class="text-muted-2 mb-3">No cars yet.</div>
+          <a class="btn btn-primary" href="{% url 'car-create' %}">Add your first car</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% include "shared/pagination.html" %}
+{% endblock %}

@@ -1,10 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "shared/base.html" %}
+{% block title %}EliteDrive • {% if object %}Edit Brand{% else %}Create Brand{% endif %}{% endblock %}
 
-</body>
-</html>
+{% block content %}
+  <div class="card glass p-4">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+      <div>
+        <h1 class="h4 mb-1">{% if object %}Edit Brand{% else %}Create Brand{% endif %}</h1>
+        <div class="text-muted-2 small">Brand information used by cars.</div>
+      </div>
+      <a class="btn btn-outline-light" href="{% url 'brand-list' %}">Back</a>
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for err in form.non_field_errors %}<div>{{ err }}</div>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="row g-3">
+        <div class="col-md-6">{% include "shared/form_field.html" with field=form.name %}</div>
+        <div class="col-md-6">{% include "shared/form_field.html" with field=form.country %}</div>
+        <div class="col-md-6">{% include "shared/form_field.html" with field=form.founded_year %}</div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-primary px-4" type="submit">Save</button>
+        <a class="btn btn-outline-light px-4" href="{% url 'brand-list' %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

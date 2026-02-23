@@ -1,10 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "shared/base.html" %}
+{% block title %}EliteDrive • Brands{% endblock %}
 
-</body>
-</html>
+{% block content %}
+  <div class="d-flex justify-content-between align-items-start align-items-md-center gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Brands</h1>
+      <div class="text-muted-2">Manage luxury manufacturers.</div>
+    </div>
+    <a class="btn btn-primary" href="{% url 'brand-create' %}">+ Add Brand</a>
+  </div>
+
+  <div class="card glass p-3">
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead>
+          <tr class="text-muted-2">
+            <th>Name</th>
+            <th>Country</th>
+            <th>Founded</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in brands %}
+            <tr>
+              <td class="fw-semibold">{{ b.name }}</td>
+              <td class="text-muted-2">{{ b.country|default:"—" }}</td>
+              <td class="text-muted-2">{{ b.founded_year|default:"—" }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-light" href="{% url 'brand-edit' b.pk %}">Edit</a>
+                <a class="btn btn-sm btn-outline-danger" href="{% url 'brand-delete' b.pk %}">Delete</a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4" class="text-muted-2">No brands yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

@@ -1,10 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "shared/base.html" %}
+{% block title %}EliteDrive • {{ car.brand.name }} {{ car.model_name }}{% endblock %}
 
-</body>
-</html>
+{% block content %}
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-3">
+    <div>
+      <h1 class="h3 mb-1">{{ car.brand.name }} {{ car.model_name }}</h1>
+      <div class="text-muted-2">
+        {{ car.year }} • {{ car.get_fuel_type_display }} • {{ car.get_transmission_display }}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-light" href="{% url 'car-edit' car.pk %}">Edit</a>
+      <a class="btn btn-outline-danger" href="{% url 'car-delete' car.pk %}">Delete</a>
+      <a class="btn btn-primary" href="{% url 'car-list' %}">Back</a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card glass overflow-hidden">
+        {% if car.image_url %}
+          <img src="{{ car.image_url }}" alt="Car image" style="width:100%; height:360px; object-fit:cover;">
+        {% else %}
+          <div class="d-flex align-items-center justify-content-center" style="height:360px;">
+            <div class="text-muted-2">No image available</div>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if car.description %}
+        <div class="card glass p-3 mt-3">
+          <h2 class="h6 mb-2">Description</h2>
+          <div class="text-muted-2">{{ car.description }}</div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card glass p-3">
+        <h2 class="h6 mb-3">Specifications</h2>
+
+        <div class="table-responsive">
+          <table class="table table-dark table-borderless align-middle mb-0">
+            <tbody>
+              <tr>
+                <td class="text-muted-2">Price</td>
+                <td class="fw-semibold">€{{ car.price }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted-2">Horsepower</td>
+                <td class="fw-semibold">{{ car.horsepower }} HP</td>
+              </tr>
+              <tr>
+                <td class="text-muted-2">Transmission</td>
+                <td class="fw-semibold">{{ car.get_transmission_display }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted-2">Fuel</td>
+                <td class="fw-semibold">{{ car.get_fuel_type_display }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted-2">Availability</td>
+                <td>
+                  {% if car.is_available %}
+                    <span class="badge text-bg-success">Available</span>
+                  {% else %}
+                    <span class="badge text-bg-secondary">Unavailable</span>
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="text-muted-2">Created</td>
+                <td class="text-muted-2">{{ car.created_at }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card glass p-3 mt-3">
+        <h2 class="h6 mb-2">Features</h2>
+        <div class="d-flex flex-wrap gap-2">
+          {% for f in car.features.all %}
+            <span class="badge badge-soft">{{ f.name }}</span>
+          {% empty %}
+            <span class="text-muted-2">No features selected.</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card glass p-3 mt-3">
+        <h2 class="h6 mb-2">Collections</h2>
+        <div class="d-flex flex-wrap gap-2">
+          {% for c in car.collections.all %}
+            <a class="badge badge-soft" href="{% url 'collection-detail' c.pk %}">{{ c.title }}</a>
+          {% empty %}
+            <span class="text-muted-2">This car is not in any collection.</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

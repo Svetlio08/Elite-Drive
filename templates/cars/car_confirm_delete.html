@@ -1,10 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "shared/base.html" %}
+{% block title %}EliteDrive • Delete Car{% endblock %}
 
-</body>
-</html>
+{% block content %}
+  <div class="card glass p-4">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+      <div>
+        <h1 class="h4 mb-1">Delete Car</h1>
+        <div class="text-muted-2 small">
+          This action cannot be undone.
+        </div>
+      </div>
+      <a class="btn btn-outline-light" href="{% url 'car-detail' object.pk %}">Back</a>
+    </div>
+
+    <div class="alert alert-warning border-0 glass text-light">
+      Are you sure you want to delete
+      <strong>{{ object.brand.name }} {{ object.model_name }}</strong>?
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-md-6">{% include "shared/form_field.html" with field=form.brand %}</div>
+        <div class="col-md-6">{% include "shared/form_field.html" with field=form.model_name %}</div>
+        <div class="col-md-4">{% include "shared/form_field.html" with field=form.year %}</div>
+        <div class="col-md-4">{% include "shared/form_field.html" with field=form.price %}</div>
+        <div class="col-md-4">{% include "shared/form_field.html" with field=form.horsepower %}</div>
+        <div class="col-md-6">{% include "shared/form_field.html" with field=form.transmission %}</div>
+        <div class="col-md-6">{% include "shared/form_field.html" with field=form.fuel_type %}</div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-danger px-4" type="submit">Yes, delete</button>
+        <a class="btn btn-outline-light px-4" href="{% url 'car-detail' object.pk %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

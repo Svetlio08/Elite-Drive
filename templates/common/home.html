@@ -1,10 +1,120 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "shared/base.html" %}
+{% block title %}EliteDrive • Home{% endblock %}
 
-</body>
-</html>
+{% block content %}
+  <div class="p-4 p-md-5 mb-4 rounded-4 glass">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8">
+        <h1 class="display-6 fw-semibold mb-2">Luxury car catalog with curated collections.</h1>
+        <p class="text-muted-2 mb-0">
+          Browse premium models, manage brands & features, and build showroom collections.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <a class="btn btn-primary px-4" href="{% url 'car-create' %}">+ Add Car</a>
+        <a class="btn btn-outline-light px-4 ms-2" href="{% url 'collection-create' %}">+ New Collection</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card glass p-3">
+        <div class="d-flex justify-content-between">
+          <div>
+            <div class="text-muted-2 small">Cars</div>
+            <div class="h3 mb-0">{{ cars_count|default:"—" }}</div>
+          </div>
+          <div class="badge badge-soft align-self-start px-3 py-2">Inventory</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card glass p-3">
+        <div class="d-flex justify-content-between">
+          <div>
+            <div class="text-muted-2 small">Brands</div>
+            <div class="h3 mb-0">{{ brands_count|default:"—" }}</div>
+          </div>
+          <div class="badge badge-soft align-self-start px-3 py-2">Catalog</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card glass p-3">
+        <div class="d-flex justify-content-between">
+          <div>
+            <div class="text-muted-2 small">Collections</div>
+            <div class="h3 mb-0">{{ collections_count|default:"—" }}</div>
+          </div>
+          <div class="badge badge-soft align-self-start px-3 py-2">Showroom</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card glass p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h5 mb-0">Latest Cars</h2>
+          <a class="text-decoration-none" href="{% url 'car-list' %}">View all →</a>
+        </div>
+
+        <div class="row g-3">
+          {% for car in latest_cars %}
+            <div class="col-md-6">
+              <div class="card bg-transparent border border-white border-opacity-10 h-100">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <div class="fw-semibold">{{ car.brand.name }} {{ car.model_name }}</div>
+                      <div class="text-muted-2 small">{{ car.year }} • {{ car.get_fuel_type_display }} • {{ car.get_transmission_display }}</div>
+                    </div>
+                    {% if car.is_available %}
+                      <span class="badge text-bg-success">Available</span>
+                    {% else %}
+                      <span class="badge text-bg-secondary">Unavailable</span>
+                    {% endif %}
+                  </div>
+                  <div class="mt-3 d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-light" href="{% url 'car-detail' car.pk %}">Details</a>
+                    <a class="btn btn-sm btn-outline-light" href="{% url 'car-edit' car.pk %}">Edit</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <div class="text-muted-2">No cars yet. Add your first one!</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card glass p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h5 mb-0">Featured Collections</h2>
+          <a class="text-decoration-none" href="{% url 'collection-list' %}">View all →</a>
+        </div>
+
+        <div class="list-group list-group-flush">
+          {% for c in featured_collections %}
+            <a class="list-group-item list-group-item-action bg-transparent text-light border-white border-opacity-10"
+               href="{% url 'collection-detail' c.pk %}">
+              <div class="d-flex justify-content-between">
+                <div class="fw-semibold">{{ c.title }}</div>
+                <span class="badge badge-soft">{{ c.cars.count }} cars</span>
+              </div>
+              {% if c.description %}
+                <div class="small text-muted-2 mt-1">{{ c.description|truncatechars:90 }}</div>
+              {% endif %}
+            </a>
+          {% empty %}
+            <div class="text-muted-2 small">No featured collections yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

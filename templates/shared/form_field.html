@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="mb-3">
+  <label class="form-label text-light">
+    {{ field.label }}
+    {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+  </label>
 
-</body>
-</html>
+  {% if field.field.widget.input_type == "checkbox" %}
+    <div class="form-check">
+      {{ field }}
+      <label class="form-check-label">{{ field.help_text }}</label>
+    </div>
+  {% else %}
+    {{ field }}
+    {% if field.help_text %}
+      <div class="form-text text-muted-2">{{ field.help_text }}</div>
+    {% endif %}
+  {% endif %}
+
+  {% if field.errors %}
+    <div class="mt-1">
+      {% for err in field.errors %}
+        <div class="small text-danger">{{ err }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

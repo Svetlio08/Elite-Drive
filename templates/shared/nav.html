@@ -1,10 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<nav class="navbar navbar-expand-lg navbar-dark border-bottom border-white border-opacity-10">
+  <div class="container">
+    <a class="navbar-brand fw-semibold" href="{% url 'home' %}">
+      <span class="me-2">🚘</span>EliteDrive
+    </a>
 
-</body>
-</html>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto gap-1">
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path|slice:':6' == '/cars/' %}active{% endif %}" href="{% url 'car-list' %}">Cars</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path|slice:':8' == '/brands/' %}active{% endif %}" href="{% url 'brand-list' %}">Brands</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path|slice:':10' == '/features/' %}active{% endif %}" href="{% url 'feature-list' %}">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path|slice:':13' == '/collections/' %}active{% endif %}" href="{% url 'collection-list' %}">Collections</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
