@@ -1,4 +1,5 @@
 {% extends "shared/base.html" %}
+{% load elite_tags %}
 {% block title %}EliteDrive • {{ car.brand.name }} {{ car.model_name }}{% endblock %}
 
 {% block content %}
@@ -45,7 +46,7 @@
             <tbody>
               <tr>
                 <td class="text-muted-2">Price</td>
-                <td class="fw-semibold">€{{ car.price }}</td>
+                <td class="fw-semibold">€{{ car.price | format_price }}</td>
               </tr>
               <tr>
                 <td class="text-muted-2">Horsepower</td>
