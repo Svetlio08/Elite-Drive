@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # EliteDrive 🚗
 
 EliteDrive is a luxury car catalog web application built with Django and PostgreSQL.
